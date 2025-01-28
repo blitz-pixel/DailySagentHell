@@ -1,6 +1,4 @@
-
 import { useState } from "react";
-
 import { motion } from "framer-motion";
 import "./App.css";
 
@@ -18,6 +16,8 @@ export default function QuizApp() {
     const [score, setScore] = useState(0);
     const [startTime, setStartTime] = useState(Date.now());
     const [results, setResults] = useState(null);
+    const [correctCount, setCorrectCount] = useState(0); // Track correct answers
+    const [incorrectCount, setIncorrectCount] = useState(0); // Track incorrect answers
 
     const handleOptionSelect = (option) => {
         setSelectedOption(option);
@@ -26,10 +26,15 @@ export default function QuizApp() {
     const handleNextQuestion = () => {
         const timeTaken = (Date.now() - startTime) / 1000;
 
+        // Check if the selected option is correct
         if (selectedOption === quizData[currentQuestionIndex].answer) {
             setScore((prevScore) => prevScore + Math.max(10 - Math.floor(timeTaken), 1));
+            setCorrectCount((prevCount) => prevCount + 1); // Increment correct count
+        } else {
+            setIncorrectCount((prevCount) => prevCount + 1); // Increment incorrect count
         }
 
+        // Move to the next question or finish the quiz
         if (currentQuestionIndex < quizData.length - 1) {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
             setSelectedOption(null);
@@ -80,6 +85,8 @@ export default function QuizApp() {
                     <div className="bg-white shadow-md rounded-lg p-6">
                         <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
                         <p className="text-lg">Your Score: {results}</p>
+                        <p className="text-lg">Correct Answers: {correctCount}</p>
+                        <p className="text-lg">Incorrect Answers: {incorrectCount}</p>
                     </div>
                 </motion.div>
             )}
